@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const screen1 = () => {
+const BorrowingScreens = () => {
   return (
     <View>
-      <Text>screen1</Text>
+      <Text>BorrowingScreens</Text>
     </View>
   )
 }
 
-export default screen1
+export default BorrowingScreens
 
 const styles = StyleSheet.create({})

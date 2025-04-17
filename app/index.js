@@ -4,6 +4,7 @@ import AuthButton from '../components/AuthButton';
 import { router } from "expo-router";
 
 const WelcomeScreen = () => {
+  console.log('WelcomeScreen rendered');
   return (
     <View style={styles.container}>
       <Image source={require('../assets/images/icon.png')} style={styles.logo} />
@@ -13,12 +14,12 @@ const WelcomeScreen = () => {
       <View style={styles.buttonContainer}>
         <AuthButton 
           title="Đăng nhập" 
-          onPress={() => router.push('/login-screen')} 
+          onPress={() => router.push('/login_screen')} 
           style={{ backgroundColor: '#3498db' }}
         />
         <AuthButton 
           title="Đăng ký" 
-          onPress={() => router.push('/register-screen')} 
+          onPress={() => router.push('/register_screen')} 
           style={{ backgroundColor: '#2ecc71' }}
         />
       </View>

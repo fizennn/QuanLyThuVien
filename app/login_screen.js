@@ -7,16 +7,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/actions/authActions";
 
 const LoginScreen = () => {
+  console.log("LoginScreen rendered");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { user, loading, error } = useSelector((state) => state.auth)
+  const { user, loading, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (user.role == 0) {
-      router.push("/userRouter");
-    } else {
-      router.push("/adminRouter");
+    if (user != null) {
+      if (user.role == 0) {
+        router.push("/userRouter");
+      } else {
+        router.push("/adminRouter");
+      }
     }
   }, [user]);
 
@@ -53,9 +56,10 @@ const LoginScreen = () => {
         <Text style={styles.forgotPassword}>Quên mật khẩu?</Text>
       </TouchableOpacity>
 
-      <AuthButton title={
-        loading ? "Đang đăng nhập..." : "Đăng nhập"
-      } onPress={handleLogin} />
+      <AuthButton
+        title={loading ? "Đang đăng nhập..." : "Đăng nhập"}
+        onPress={handleLogin}
+      />
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>Chưa có tài khoản? </Text>

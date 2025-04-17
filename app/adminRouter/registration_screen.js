@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const screen3 = () => {
+const RegistrationScreen = () => {
   return (
     <View>
-      <Text>screen3</Text>
+      <Text>registration_screen</Text>
     </View>
   )
 }
 
-export default screen3
+export default RegistrationScreen
 
 const styles = StyleSheet.create({})
