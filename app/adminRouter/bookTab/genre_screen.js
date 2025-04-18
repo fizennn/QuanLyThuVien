@@ -1,14 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const BookScreen = () => {
+const genre_screen = () => {
   return (
     <View>
-      <Text>BookScreen</Text>
+      <Text>genre_screen</Text>
     </View>
   )
 }
 
-export default BookScreen
+export default genre_screen
 
 const styles = StyleSheet.create({})
