@@ -34,9 +34,8 @@ export const fetchBookById = createAsyncThunk(
 // Tạo sách mới
 export const addBook = createAsyncThunk(
   'books/add',
-  async (bookData, { rejectWithValue }) => {
+  async ({bookData, token}, { rejectWithValue }) => {
     try {
-      const token = getState().auth.user?.token;
       return await createBook(bookData, token);
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add book');

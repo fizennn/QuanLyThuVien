@@ -1,9 +1,11 @@
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBooks } from '@/redux/actions/bookActions';
+import { fetchBooks, addBook } from '@/redux/actions/bookActions';
 import { fetchAllTheLoai } from '@/redux/actions/theLoaiActions';
 import BookList from '@/components/BookList';
+import FloatingAddButton from '@/components/FloatingAddButton';
+import AddBookModal from '@/components/AddBookModal';
 
 const BookScreen = () => {
   const dispatch = useDispatch();
@@ -11,18 +13,31 @@ const BookScreen = () => {
   const { theLoai } = useSelector(state => state.theLoai);
   const { token } = useSelector((state) => state.auth);
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   useEffect(() => {
     dispatch(fetchBooks({ token }));
     dispatch(fetchAllTheLoai({ token }));
   }, []);
 
+  const handleAddBook = (bookData) => {
+    dispatch(addBook({ bookData, token }));
+  };
+
   return (
     <View style={styles.container}>
-      {books && books.length > 0 ? (
-        <BookList books={books} theLoais={theLoai}/>
+      {books?.length > 0 ? (
+        <BookList books={books} theLoais={theLoai} />
       ) : (
         <Text>Không có sách nào</Text>
       )}
+      <FloatingAddButton onPress={() => setModalVisible(true)} />
+      <AddBookModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleAddBook}
+        theLoai={theLoai}
+      />
     </View>
   );
 };

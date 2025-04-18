@@ -17,10 +17,16 @@ export const getBookById = async (id, token) => {
 };
 
 export const createBook = async (bookData, token) => {
-  const response = await axios.post(`${API_URL}/sach`, bookData, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
+  console.log(`${API_URL}/sach`);
+  try {
+    const response = await axios.post(`${API_URL}/sach`, bookData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Lỗi khi gọi API:", error.response?.data || error.message);
+    throw error; // hoặc xử lý khác nếu cần
+  }
 };
 
 export const updateBook = async (id, bookData, token) => {

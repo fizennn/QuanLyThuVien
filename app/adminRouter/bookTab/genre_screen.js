@@ -8,9 +8,6 @@ const GenreScreen = () => {
   const dispatch = useDispatch();
   const { theLoai } = useSelector(state => state.theLoai);
 
-  useEffect(() => {
-    dispatch(fetchAllTheLoai());
-  }, [dispatch]);
 
   return (
     <View style={styles.container}>
