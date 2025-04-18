@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
-import React from 'react';
+import { StyleSheet, Text, View, Image } from "react-native";
+import React from "react";
 
-const BookItem = ({ book }) => {
+const BookItem = ({ book, theLoai }) => {
   return (
     <View style={styles.bookContainer}>
       {book.anh && (
@@ -14,7 +14,9 @@ const BookItem = ({ book }) => {
       <View style={styles.bookInfo}>
         <Text style={styles.title}>{book.tenSach}</Text>
         <Text style={styles.author}>Tác giả: {book.tacGia}</Text>
-        <Text>Thể loại: {book.theLoai}</Text>
+        <Text>
+          Thể loại: {theLoai}
+        </Text>
         <Text>Nhà xuất bản: {book.nxb}</Text>
         <Text>Giá mượn: {book.giaMuon.toLocaleString()} VNĐ</Text>
         <Text>Số lượng kho: {book.soLuongKho}</Text>
@@ -27,13 +29,13 @@ export default BookItem;
 
 const styles = StyleSheet.create({
   bookContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 12,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   bookImage: {
     width: 100,
@@ -43,22 +45,22 @@ const styles = StyleSheet.create({
   },
   bookInfo: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
-    color: '#333',
+    color: "#333",
   },
   author: {
     fontSize: 14,
-    fontStyle: 'italic',
-    color: '#555',
+    fontStyle: "italic",
+    color: "#555",
   },
   description: {
     marginTop: 6,
-    fontStyle: 'italic',
-    color: '#666',
+    fontStyle: "italic",
+    color: "#666",
   },
 });

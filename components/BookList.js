@@ -2,8 +2,11 @@ import { StyleSheet, FlatList } from 'react-native';
 import React from 'react';
 import BookItem from './BookItem';
 
-const BookList = ({ books }) => {
-  const renderItem = ({ item }) => <BookItem book={item} />;
+const BookList = ({ books, theLoais }) => {
+
+  const renderItem = ({ item }) => <BookItem book={item} theLoai={
+    theLoais?.find((theLoai) => theLoai._id == item.theLoai)?.tenTheLoai || "Không xác định"
+  }/>;
 
   return (
     <FlatList
