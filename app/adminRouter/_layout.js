@@ -27,7 +27,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="borrowing_screen"
         options={{
-          title: 'Vé Mượn',
+          title: 'Phiếu Mượn',
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
               name={focused ? 'ticket' : 'ticket-outline'}

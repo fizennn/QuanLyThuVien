@@ -28,7 +28,7 @@ export default BookScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: 35,
     flex: 1,
     paddingVertical: 16,
     paddingLeft: 16,
