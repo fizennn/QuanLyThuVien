@@ -31,9 +31,9 @@ export const fetchTheLoaiById = createAsyncThunk(
 
 export const addTheLoai = createAsyncThunk(
   'theLoai/add',
-  async ({ theLoaiData, token }, { rejectWithValue }) => {
+  async ({ genreData, token }, { rejectWithValue }) => {
     try {
-      return await createTheLoai(theLoaiData, token);
+      return await createTheLoai(genreData, token);
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to add category');
     }

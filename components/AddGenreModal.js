@@ -4,13 +4,12 @@ import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
 } from "react-native";
-import AddBookForm from "./AddBookForm";
+import AddGenreForm from "./AddGenreForm";
 import { Text, IconButton, Divider } from "react-native-paper";
 
-const AddBookModal = ({ visible, onClose, onSubmit, theLoai }) => {
+const AddGenreModal = ({ visible, onClose, onSubmit }) => {
   return (
     <Modal visible={visible} animationType="slide" transparent>
       <TouchableWithoutFeedback onPress={onClose}>
@@ -18,23 +17,23 @@ const AddBookModal = ({ visible, onClose, onSubmit, theLoai }) => {
           <TouchableWithoutFeedback onPress={() => {}}>
             <View style={styles.modalContent}>
               <View>
-                <Text style={styles.formTitle}>Thêm sách mới</Text>
+                <Text style={styles.formTitle}>Thêm thể loại mới</Text>
                 <IconButton
                   icon="close"
                   size={24}
                   onPress={onClose}
-                  style={{ position: "absolute", top: -9, right: 0 }}
+                  style={{ position: "absolute", top: -10, right: 0 }}
                 />
               </View>
+           
 
               <Divider style={styles.divider} />
               <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <AddBookForm
+                <AddGenreForm
                   onSubmit={(data) => {
                     onSubmit(data);
                     onClose();
                   }}
-                  theLoai={theLoai}
                   onClose={onClose}
                 />
               </ScrollView>
@@ -46,7 +45,7 @@ const AddBookModal = ({ visible, onClose, onSubmit, theLoai }) => {
   );
 };
 
-export default AddBookModal;
+export default AddGenreModal;
 
 const styles = StyleSheet.create({
   overlay: {
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    height: "auto", // This allows the modal content to resize based on the content
+    height: "auto",
   },
   formTitle: {
     fontSize: 22,
@@ -72,4 +71,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
     marginBottom: 16,
   },
+
 });

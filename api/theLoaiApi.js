@@ -15,11 +15,16 @@ export const getTheLoaiById = async (id, token) => {
   return response.data;
 };
 
-export const createTheLoai = async (theLoaiData, token) => {
-  const response = await axios.post(`${API_URL}/theloai`, theLoaiData, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-  return response.data;
+export const createTheLoai = async (genreData, token) => {
+  try {
+    const response = await axios.post(`${API_URL}/theloai`, genreData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error in createTheLoai:", error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const updateTheLoai = async (id, theLoaiData, token) => {
