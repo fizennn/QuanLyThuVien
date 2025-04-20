@@ -32,9 +32,9 @@ export default function Layout() {
                 textAlign: 'center',
                 fontSize: 14,
                 borderBottomWidth: focused ? 2 : 0,
-                borderBottomColor: focused ? 'blue' : 'transparent',
+                borderBottomColor: focused ? '#2196F3' : 'transparent',
                 paddingBottom: 4,
-                color: focused ? 'blue' : 'black',
+                color: focused ? '#2196F3' : 'black',
                 fontWeight: focused ? 'bold' : 'normal',
               }}
             >
@@ -55,9 +55,9 @@ export default function Layout() {
                 textAlign: 'center',
                 fontSize: 14,
                 borderBottomWidth: focused ? 2 : 0,
-                borderBottomColor: focused ? 'blue' : 'transparent',
+                borderBottomColor: focused ? '#2196F3' : 'transparent',
                 paddingBottom: 4,
-                color: focused ? 'blue' : 'black',
+                color: focused ? '#2196F3' : 'black',
                 fontWeight: focused ? 'bold' : 'normal',
               }}
             >

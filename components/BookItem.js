@@ -1,9 +1,17 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import { useRouter } from 'expo-router';
 
 const BookItem = ({ book, theLoai }) => {
+  const router = useRouter();
+  const handlePress = () => () => {
+    router.push({
+      pathname: '/book_details_screen',
+      params: { book: JSON.stringify(book), theLoai: JSON.stringify(theLoai) },
+    });
+  }
   return (
-    <View style={styles.bookContainer}>
+    <TouchableOpacity onPress={handlePress()} style={styles.bookContainer}>
       {book.anh && (
         <Image
           source={{ uri: book.anh }}
@@ -21,7 +29,7 @@ const BookItem = ({ book, theLoai }) => {
         <Text>Giá mượn: {book.giaMuon.toLocaleString()} VNĐ</Text>
         <Text>Số lượng kho: {book.soLuongKho}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { router } from "expo-router";
+import { signUp } from '../api/authApi'; // Import the signUp API function
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -10,9 +11,21 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleRegister = () => {
-    // Xử lý đăng ký ở đây
-    console.log('Register data:', { name, email, password, confirmPassword });
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Lỗi', 'Mật khẩu và xác nhận mật khẩu không khớp.');
+      return;
+    }
+
+    try {
+      const response = await signUp(email, password, name);
+      Alert.alert('Thành công', 'Đăng ký tài khoản thành công!');
+      router.back(); // Go back to the previous screen
+      router.push('/login_screen'); // Navigate to the login screen
+    } catch (error) {
+      console.error('Error during sign-up:', error);
+      Alert.alert('Lỗi', 'Đăng ký không thành công. Vui lòng thử lại.');
+    }
   };
 
   return (

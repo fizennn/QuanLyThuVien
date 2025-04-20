@@ -6,6 +6,7 @@ import { fetchAllTheLoai } from '@/redux/actions/theLoaiActions';
 import BookList from '@/components/BookList';
 import FloatingAddButton from '@/components/FloatingAddButton';
 import AddBookModal from '@/components/AddBookModal';
+import { router } from "expo-router";
 
 const BookScreen = () => {
   const dispatch = useDispatch();
@@ -24,10 +25,11 @@ const BookScreen = () => {
     dispatch(addBook({ bookData, token }));
   };
 
+
   return (
     <View style={styles.container}>
       {books?.length > 0 ? (
-        <BookList books={books} theLoais={theLoai} />
+        <BookList books={books} theLoais={theLoai}/>
       ) : (
         <Text>Không có sách nào</Text>
       )}

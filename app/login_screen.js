@@ -52,7 +52,7 @@ const LoginScreen = () => {
         secureTextEntry
       />
 
-      <TouchableOpacity onPress={() => router.push("/forgot-password-screen")}>
+      <TouchableOpacity onPress={() => router.push("/forgot_password_screen")}>
         <Text style={styles.forgotPassword}>Quên mật khẩu?</Text>
       </TouchableOpacity>
 

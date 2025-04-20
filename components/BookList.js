@@ -3,7 +3,6 @@ import React from 'react';
 import BookItem from './BookItem';
 
 const BookList = ({ books, theLoais }) => {
-
   const renderItem = ({ item }) => <BookItem book={item} theLoai={
     theLoais?.find((theLoai) => theLoai._id == item.theLoai)?.tenTheLoai || "Không xác định"
   }/>;

@@ -67,6 +67,7 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
   return (
     <>
       <Modal visible={visible} animationType="slide" transparent>
+      <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.overlay}>
             <TouchableWithoutFeedback onPress={() => {}}>

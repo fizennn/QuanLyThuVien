@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import AuthInput from '../components/AuthInput';
 import AuthButton from '../components/AuthButton';
 import { router } from "expo-router";
+import { requestOTP } from '../api/authApi'; // Import API
 
 const ForgotPasswordScreen = () => {
   const [email, setEmail] = useState('');
 
-  const handleResetPassword = () => {
-    // Xử lý quên mật khẩu ở đây
-    console.log('Reset password for:', email);
+  const handleResetPassword = async () => {
+    try {
+      const response = await requestOTP(email); // Gọi API requestOTP
+      Alert.alert('Thành công', 'OTP đã được gửi đến email của bạn.');
+      router.push('/reset_password_screen'); // Điều hướng đến màn hình đặt lại mật khẩu
+    } catch (error) {
+      Alert.alert('Lỗi', error.response?.data?.message || 'Không thể gửi yêu cầu OTP.');
+    }
   };
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -15,37 +16,55 @@ const getStatusColor = (status) => {
 };
 
 const BorrowingItem = ({ borrowing, books }) => {
-  // Sử dụng books để tra cứu tên sách
+  const router = useRouter();
+  
   const bookNames = borrowing.sachMuon.map(bookId => {
     const book = books.find(b => b._id === bookId);
     return book ? book.tenSach : bookId;
   });
 
+  const handlePress = () => {
+  
+    router.push({
+      pathname: '/borrowing_detail',
+      params: {
+        id: borrowing._id,
+        customerId: borrowing.idKhachHang,
+        staffId: borrowing.idNhanVien,
+        borrowDate: borrowing.ngayMuon,
+        dueDate: borrowing.hanTra,
+        bookIds: JSON.stringify(borrowing.sachMuon),
+        status: borrowing.trangThai.toString(),
+        bookNames: JSON.stringify(bookNames)
+      }
+    });
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.rowContainer}>
-        {/* Phần chi tiết bên trái */}
-        <View style={styles.detailContainer}>
-          <Text style={styles.title}>Mã phiếu: {borrowing._id}</Text>
-          <Text>Khách hàng: {borrowing.idKhachHang}</Text>
-          <Text>Nhân viên: {borrowing.idNhanVien}</Text>
-          <Text>
-            Ngày mượn: {new Date(borrowing.ngayMuon).toLocaleDateString()}
-          </Text>
-          <Text>
-            Hạn trả: {new Date(borrowing.hanTra).toLocaleDateString()}
-          </Text>
-          <Text>Sách mượn: {bookNames.join(', ')}</Text>
+    <TouchableOpacity onPress={handlePress}>
+      <View style={styles.container}>
+        <View style={styles.rowContainer}>
+          <View style={styles.detailContainer}>
+            <Text style={styles.title}>Mã phiếu: {borrowing._id}</Text>
+            <Text>Khách hàng: {borrowing.idKhachHang}</Text>
+            <Text>Nhân viên: {borrowing.idNhanVien}</Text>
+            <Text>
+              Ngày mượn: {new Date(borrowing.ngayMuon).toLocaleDateString()}
+            </Text>
+            <Text>
+              Hạn trả: {new Date(borrowing.hanTra).toLocaleDateString()}
+            </Text>
+            <Text>Sách mượn: {bookNames.join(', ')}</Text>
+          </View>
+          <View
+            style={[
+              styles.statusIndicator,
+              { backgroundColor: getStatusColor(borrowing.trangThai) }
+            ]}
+          />
         </View>
-        {/* Phần trạng thái bên phải chỉ hiển thị màu sắc */}
-        <View
-          style={[
-            styles.statusIndicator,
-            { backgroundColor: getStatusColor(borrowing.trangThai) }
-          ]}
-        />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -72,10 +91,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   statusIndicator: {
-    width: 30,           // chiếm 1 phần chiều rộng, bạn có thể điều chỉnh giá trị này theo yêu cầu
+    width: 30,
     marginLeft: 12,
     borderTopEndRadius: 8,
     borderBottomEndRadius: 8,
-    alignSelf: 'stretch', // làm đầy chiều cao của container
+    alignSelf: 'stretch',
   },
 });

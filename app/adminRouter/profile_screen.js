@@ -1,12 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import ProfileScreenCompoment from '../../components/ProfileScreen';
+
 
 const ProfileScreen = () => {
-  return (
-    <View>
-      <Text>profile_screens</Text>
-    </View>
-  )
+  const { user, loading } = useSelector((state) => state.auth);
+  
 }
 
 export default ProfileScreen

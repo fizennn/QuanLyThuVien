@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   ScrollView,
+  StatusBar
 } from "react-native";
 import AddGenreForm from "./AddGenreForm";
 import { Text, IconButton, Divider } from "react-native-paper";
@@ -12,6 +13,7 @@ import { Text, IconButton, Divider } from "react-native-paper";
 const AddGenreModal = ({ visible, onClose, onSubmit }) => {
   return (
     <Modal visible={visible} animationType="slide" transparent>
+      <StatusBar backgroundColor="rgba(0,0,0,0.4)" barStyle="light-content" />
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback onPress={() => {}}>
