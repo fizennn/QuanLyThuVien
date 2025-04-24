@@ -96,7 +96,7 @@ const BorrowingDetail = () => {
               <View style={styles.row}>
                 <Text style={styles.label}>Hạn trả:</Text>
                 <Text style={styles.value}>
-                  {new Date(params.dueDate).toLocaleDateString()}
+                  {(params.dueDate)}
                 </Text>
               </View>
             </View>
@@ -106,12 +106,12 @@ const BorrowingDetail = () => {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Danh sách sách</Text>
               <View style={styles.bookList}>
-                {bookNames.map((name, index) => (
+                {bookNames.map((book, index) => (
                   <View key={index} style={styles.bookItemContainer}>
                     <Text style={styles.bookItem}>
-                      <Text style={styles.bulletPoint}>•</Text> {name}
+                      <Text style={styles.bulletPoint}>•</Text> {book}
                     </Text>
-                    <Text style={styles.bookId}>ID: {bookIds[index]}</Text>
+                    <Text style={styles.bookId}>ID: {bookIds[index]._id}</Text>
                   </View>
                 ))}
               </View>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, View, StyleSheet, TouchableWithoutFeedback, FlatList, TextInput, TouchableOpacity, StatusBar } from 'react-native';
 import { Button, Text, Searchbar, Divider, IconButton } from 'react-native-paper';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPhieuMuon } from '../redux/actions/phieuMuonActions';
 
 const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availableBooks = [] }) => {
   const initialState = {
@@ -17,6 +19,9 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredBooks, setFilteredBooks] = useState(availableBooks);
 
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth); // Lấy token từ Redux store
+
   useEffect(() => {
     setFilteredBooks(availableBooks);
   }, [availableBooks]);
@@ -25,10 +30,16 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
     setBorrowing(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmit = () => {
-    onSubmit(borrowing);
-    onClose();
-    setBorrowing(initialState);
+  const handleSubmit = async () => {
+    try {
+      await dispatch(addPhieuMuon({ data: borrowing, token })).unwrap(); // Gọi API thêm phiếu mượn
+      onSubmit(borrowing); // Gọi callback nếu cần
+      onClose(); // Đóng modal
+      setBorrowing(initialState); // Reset form
+    } catch (error) {
+      console.error('Error submitting borrowing:', error);
+      // Xử lý lỗi (hiển thị thông báo, v.v.)
+    }
   };
 
   const handleAddBook = (book) => {

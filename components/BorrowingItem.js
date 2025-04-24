@@ -18,9 +18,9 @@ const getStatusColor = (status) => {
 const BorrowingItem = ({ borrowing, books }) => {
   const router = useRouter();
   
-  const bookNames = borrowing.sachMuon.map(bookId => {
-    const book = books.find(b => b._id === bookId);
-    return book ? book.tenSach : bookId;
+  const bookNames = borrowing.sachMuon.map(item => {
+    const book = books.find(b => b._id === item._id);
+    return book ? book.tenSach : item._id;
   });
 
   const handlePress = () => {
@@ -52,7 +52,7 @@ const BorrowingItem = ({ borrowing, books }) => {
               Ngày mượn: {new Date(borrowing.ngayMuon).toLocaleDateString()}
             </Text>
             <Text>
-              Hạn trả: {new Date(borrowing.hanTra).toLocaleDateString()}
+              Hạn trả: {(borrowing.hanTra)}
             </Text>
             <Text>Sách mượn: {bookNames.join(', ')}</Text>
           </View>

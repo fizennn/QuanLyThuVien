@@ -65,7 +65,7 @@ const LoginScreen = () => {
         <Text style={styles.footerText}>Chưa có tài khoản? </Text>
         <TouchableOpacity
           onPress={() => {
-            router.back(), router.push("/register-screen");
+            router.back(), router.push("/register_screen");
           }}
         >
           <Text style={styles.footerLink}>Đăng ký ngay</Text>
