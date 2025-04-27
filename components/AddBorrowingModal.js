@@ -1,49 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, View, StyleSheet, TouchableWithoutFeedback, FlatList, TextInput, TouchableOpacity, StatusBar } from 'react-native';
-import { Button, Text, Searchbar, Divider, IconButton } from 'react-native-paper';
-import { useDispatch, useSelector } from 'react-redux';
-import { addPhieuMuon } from '../redux/actions/phieuMuonActions';
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  Platform,
+  Alert,
+} from "react-native";
+import {
+  Button,
+  Text,
+  Searchbar,
+  Divider,
+  IconButton,
+} from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { addPhieuMuon } from "../redux/actions/phieuMuonActions";
 
-const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availableBooks = [] }) => {
+const AddBorrowingModal = ({
+  visible,
+  onClose,
+  onSubmit,
+  employee = {},
+  availableBooks = [],
+}) => {
   const initialState = {
-    idKhachHang: '',
-    idNhanVien: employee._id || '',
+    idKhachHang: "",
+    idNhanVien: employee._id || "",
     ngayMuon: new Date().toISOString(),
-    hanTra: '',
+    hanTra: "",
     sachMuon: [],
     __v: 0,
   };
 
   const [borrowing, setBorrowing] = useState(initialState);
   const [isBookDialogVisible, setBookDialogVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredBooks, setFilteredBooks] = useState(availableBooks);
-
   const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth); // Lấy token từ Redux store
+  const { token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     setFilteredBooks(availableBooks);
   }, [availableBooks]);
 
   const handleChange = (key, value) => {
-    setBorrowing(prev => ({ ...prev, [key]: value }));
+    setBorrowing((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSubmit = async () => {
+    // Validate trước khi submit
+    if (!borrowing.idKhachHang) {
+      Alert.alert("Lỗi", "Vui lòng nhập ID khách hàng");
+      return;
+    }
+    
+    if (!borrowing.hanTra) {
+      Alert.alert("Lỗi", "Vui lòng chọn hạn trả");
+      return;
+    }
+    
+    if (borrowing.sachMuon.length === 0) {
+      Alert.alert("Lỗi", "Vui lòng chọn ít nhất một quyển sách");
+      return;
+    }
+
     try {
-      await dispatch(addPhieuMuon({ data: borrowing, token })).unwrap(); // Gọi API thêm phiếu mượn
-      onSubmit(borrowing); // Gọi callback nếu cần
-      onClose(); // Đóng modal
-      setBorrowing(initialState); // Reset form
+      await dispatch(addPhieuMuon({ data: borrowing, token })).unwrap();
+      onSubmit(borrowing);
+      onClose();
+      setBorrowing(initialState);
     } catch (error) {
-      console.error('Error submitting borrowing:', error);
-      // Xử lý lỗi (hiển thị thông báo, v.v.)
+      console.error("Error submitting borrowing:", error);
+      Alert.alert("Lỗi", "Có lỗi xảy ra khi thêm phiếu mượn");
     }
   };
 
   const handleAddBook = (book) => {
-    setBorrowing(prev => ({
+    setBorrowing((prev) => ({
       ...prev,
       sachMuon: [...prev.sachMuon, book],
     }));
@@ -51,34 +89,45 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
   };
 
   const handleRemoveBook = (bookId) => {
-    setBorrowing(prev => ({
+    setBorrowing((prev) => ({
       ...prev,
-      sachMuon: prev.sachMuon.filter(book => book._id !== bookId),
+      sachMuon: prev.sachMuon.filter((book) => book._id !== bookId),
     }));
   };
 
   const handleSearch = (query) => {
     setSearchQuery(query);
     setFilteredBooks(
-      availableBooks.filter(book =>
+      availableBooks.filter((book) =>
         book.tenSach.toLowerCase().includes(query.toLowerCase())
       )
     );
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "Chưa chọn";
     const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
     });
+  };
+
+  const openDatePicker = () => {
+    const defaultDate = new Date(borrowing.ngayMuon);
+    defaultDate.setDate(defaultDate.getDate() + 6);
+    setBorrowing(prev => ({
+      ...prev,
+      hanTra: defaultDate.toISOString()
+    }));
+    // No need to show any date picker dialog
   };
 
   return (
     <>
       <Modal visible={visible} animationType="slide" transparent>
-      <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
+        <StatusBar backgroundColor="rgba(0,0,0,0.5)" barStyle="light-content" />
         <TouchableWithoutFeedback onPress={onClose}>
           <View style={styles.overlay}>
             <TouchableWithoutFeedback onPress={() => {}}>
@@ -92,15 +141,17 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
                     style={styles.closeIcon}
                   />
                 </View>
-                
+
                 <Divider style={styles.divider} />
-                
+
                 <FlatList
-                  data={[{ key: 'header' }, ...borrowing.sachMuon]}
-                  keyExtractor={(item, index) => (item.key ? item.key : index.toString())}
+                  data={[{ key: "header" }, ...borrowing.sachMuon]}
+                  keyExtractor={(item, index) =>
+                    item.key ? item.key : index.toString()
+                  }
                   nestedScrollEnabled={true}
                   renderItem={({ item }) => {
-                    if (item.key === 'header') {
+                    if (item.key === "header") {
                       return (
                         <View style={styles.formContainer}>
                           <View style={styles.inputGroup}>
@@ -109,41 +160,55 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
                               style={styles.input}
                               placeholder="Nhập ID khách hàng"
                               value={borrowing.idKhachHang}
-                              onChangeText={(text) => handleChange('idKhachHang', text)}
+                              onChangeText={(text) =>
+                                handleChange("idKhachHang", text)
+                              }
                               placeholderTextColor="#9E9E9E"
                             />
                           </View>
-                          
+
                           <View style={styles.infoGroup}>
                             <Text style={styles.infoLabel}>Nhân viên:</Text>
-                            <Text style={styles.infoValue}>{employee.fullname || 'Chưa xác định'}</Text>
+                            <Text style={styles.infoValue}>
+                              {employee.fullname || "Chưa xác định"}
+                            </Text>
                           </View>
-                          
+
                           <View style={styles.infoGroup}>
                             <Text style={styles.infoLabel}>Ngày mượn:</Text>
                             <Text style={styles.infoValue}>
                               {formatDate(borrowing.ngayMuon)}
                             </Text>
                           </View>
-                          
+
                           <View style={styles.inputGroup}>
                             <Text style={styles.inputLabel}>Hạn trả</Text>
-                            <TextInput
-                              style={styles.input}
-                              placeholder="Nhập ngày hạn trả (YYYY-MM-DD)"
-                              value={borrowing.hanTra}
-                              onChangeText={(text) => handleChange('hanTra', text)}
-                              placeholderTextColor="#9E9E9E"
-                            />
+                            <TouchableOpacity
+                              onPress={openDatePicker}
+                              style={[
+                                styles.input,
+                                { justifyContent: "center" },
+                              ]}
+                            >
+                              <Text
+                                style={{
+                                  color: borrowing.hanTra ? "#000" : "#9E9E9E",
+                                }}
+                              >
+                                {formatDate(borrowing.hanTra)}
+                              </Text>
+                            </TouchableOpacity>
                           </View>
-                          
+
                           <View style={styles.bookListHeader}>
-                            <Text style={styles.bookListTitle}>Danh sách sách mượn</Text>
+                            <Text style={styles.bookListTitle}>
+                              Danh sách sách mượn
+                            </Text>
                             <Text style={styles.bookCount}>
                               {borrowing.sachMuon.length} cuốn
                             </Text>
                           </View>
-                          
+
                           {borrowing.sachMuon.length === 0 && (
                             <View style={styles.emptyBookList}>
                               <Text style={styles.emptyBookText}>
@@ -159,7 +224,9 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
                           <View style={styles.bookInfo}>
                             <Text style={styles.bookTitle}>{item.tenSach}</Text>
                             {item.tacGia && (
-                              <Text style={styles.bookAuthor}>{item.tacGia}</Text>
+                              <Text style={styles.bookAuthor}>
+                                {item.tacGia}
+                              </Text>
                             )}
                           </View>
                           <TouchableOpacity
@@ -183,9 +250,9 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
                       >
                         Thêm sách
                       </Button>
-                      <Button 
-                        mode="contained" 
-                        onPress={handleSubmit} 
+                      <Button
+                        mode="contained"
+                        onPress={handleSubmit}
                         style={styles.submitButton}
                         labelStyle={styles.submitButtonLabel}
                       >
@@ -211,7 +278,7 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
               onPress={() => setBookDialogVisible(false)}
             />
           </View>
-          
+
           <Searchbar
             placeholder="Tìm kiếm sách"
             value={searchQuery}
@@ -220,7 +287,7 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
             iconColor="#555"
             inputStyle={styles.searchInput}
           />
-          
+
           {filteredBooks.length === 0 ? (
             <View style={styles.emptySearchResult}>
               <Text style={styles.emptySearchText}>
@@ -242,19 +309,15 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
                       <Text style={styles.bookSelectAuthor}>{item.tacGia}</Text>
                     )}
                   </View>
-                  <IconButton
-                    icon="plus-circle"
-                    size={20}
-                    color="#4CAF50"
-                  />
+                  <IconButton icon="plus-circle" size={20} color="#4CAF50" />
                 </TouchableOpacity>
               )}
               ItemSeparatorComponent={() => <Divider />}
             />
           )}
-          
-          <Button 
-            onPress={() => setBookDialogVisible(false)} 
+
+          <Button
+            onPress={() => setBookDialogVisible(false)}
             style={styles.dialogCloseButton}
             labelStyle={styles.dialogCloseButtonLabel}
           >
@@ -266,45 +329,43 @@ const AddBorrowingModal = ({ visible, onClose, onSubmit, employee = {}, availabl
   );
 };
 
-export default AddBorrowingModal;
-
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '85%',
+    maxHeight: "85%",
     paddingBottom: 20,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   closeIcon: {
     margin: 0,
   },
   divider: {
     height: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
     marginBottom: 16,
   },
   formContainer: {
@@ -315,97 +376,97 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '500',
-    color: '#555',
+    fontWeight: "500",
+    color: "#555",
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: "#E0E0E0",
   },
   infoGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 16,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: "#F5F7FA",
     borderRadius: 8,
   },
   infoLabel: {
     fontSize: 15,
-    color: '#555',
-    fontWeight: '500',
+    color: "#555",
+    fontWeight: "500",
   },
   infoValue: {
     fontSize: 15,
-    color: '#333',
-    fontWeight: '600',
+    color: "#333",
+    fontWeight: "600",
   },
   bookListHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 8,
     marginBottom: 12,
   },
   bookListTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   bookCount: {
     fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
+    color: "#666",
+    fontWeight: "500",
   },
   emptyBookList: {
     padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#F5F7FA',
+    alignItems: "center",
+    backgroundColor: "#F5F7FA",
     borderRadius: 8,
     marginBottom: 16,
   },
   emptyBookText: {
-    color: '#888',
+    color: "#888",
     fontSize: 15,
   },
   bookItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
+    borderBottomColor: "#EEEEEE",
   },
   bookInfo: {
     flex: 1,
   },
   bookTitle: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   bookAuthor: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginTop: 2,
   },
   removeButton: {
-    backgroundColor: '#FFEBEE',
+    backgroundColor: "#FFEBEE",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6,
   },
   removeButtonText: {
-    color: '#F44336',
-    fontWeight: '500',
+    color: "#F44336",
+    fontWeight: "500",
     fontSize: 14,
   },
   footerContainer: {
@@ -414,47 +475,47 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginBottom: 12,
-    borderColor: '#2196F3',
+    borderColor: "#2196F3",
     borderRadius: 8,
     borderWidth: 1.5,
   },
   addButtonLabel: {
-    color: '#2196F3',
+    color: "#2196F3",
     fontSize: 15,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   submitButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
     borderRadius: 8,
     paddingVertical: 6,
   },
   submitButtonLabel: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     paddingVertical: 2,
   },
   dialogContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingTop: 0,
   },
   dialogHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
   dialogTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   searchBar: {
     marginHorizontal: 16,
     marginBottom: 16,
     elevation: 0,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     borderRadius: 8,
   },
   searchInput: {
@@ -462,39 +523,41 @@ const styles = StyleSheet.create({
   },
   emptySearchResult: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingBottom: 100,
   },
   emptySearchText: {
     fontSize: 16,
-    color: '#888',
+    color: "#888",
   },
   bookSelectItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
   bookSelectTitle: {
     fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
+    color: "#333",
+    fontWeight: "500",
   },
   bookSelectAuthor: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginTop: 2,
   },
   dialogCloseButton: {
     margin: 16,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
   },
   dialogCloseButtonLabel: {
-    color: '#333',
+    color: "#333",
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
+
+export default AddBorrowingModal;

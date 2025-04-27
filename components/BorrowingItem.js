@@ -5,13 +5,26 @@ import { useRouter } from 'expo-router';
 const getStatusColor = (status) => {
   switch (status) {
     case 0:
-      return "#808080"; // xám
+      return "#9ca3af"; // xám nhạt
     case 1:
-      return "#008000"; // xanh lá cây
+      return "#10b981"; // xanh lá cây tươi sáng
     case 2:
-      return "#FFFF00"; // vàng
+      return "#f59e0b"; // vàng cam
     default:
-      return "#000000"; // mặc định đen nếu status không xác định
+      return "#6b7280"; // mặc định xám đậm
+  }
+};
+
+const getStatusText = (status) => {
+  switch (status) {
+    case 0:
+      return "Chờ xử lý";
+    case 1:
+      return "Đã mượn";
+    case 2:
+      return "Quá hạn";
+    default:
+      return "Không xác định";
   }
 };
 
@@ -24,7 +37,6 @@ const BorrowingItem = ({ borrowing, books }) => {
   });
 
   const handlePress = () => {
-  
     router.push({
       pathname: '/borrowing_detail',
       params: {
@@ -41,27 +53,53 @@ const BorrowingItem = ({ borrowing, books }) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.8}>
       <View style={styles.container}>
         <View style={styles.rowContainer}>
           <View style={styles.detailContainer}>
             <Text style={styles.title}>Mã phiếu: {borrowing._id}</Text>
-            <Text>Khách hàng: {borrowing.idKhachHang}</Text>
-            <Text>Nhân viên: {borrowing.idNhanVien}</Text>
-            <Text>
-              Ngày mượn: {new Date(borrowing.ngayMuon).toLocaleDateString()}
-            </Text>
-            <Text>
-              Hạn trả: {(borrowing.hanTra)}
-            </Text>
-            <Text>Sách mượn: {bookNames.join(', ')}</Text>
+            
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Khách hàng:</Text>
+              <Text style={styles.value}>{borrowing.idKhachHang}</Text>
+            </View>
+            
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Nhân viên:</Text>
+              <Text style={styles.value}>{borrowing.idNhanVien}</Text>
+            </View>
+            
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Ngày mượn:</Text>
+              <Text style={styles.value}>
+                {new Date(borrowing.ngayMuon).toLocaleDateString()}
+              </Text>
+            </View>
+            
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Hạn trả:</Text>
+              <Text style={styles.value}>{borrowing.hanTra}</Text>
+            </View>
+            
+            <View style={styles.bookContainer}>
+              <Text style={styles.label}>Sách mượn:</Text>
+              <Text style={styles.bookNames} numberOfLines={2}>
+                {bookNames.join(', ')}
+              </Text>
+            </View>
           </View>
-          <View
-            style={[
-              styles.statusIndicator,
-              { backgroundColor: getStatusColor(borrowing.trangThai) }
-            ]}
-          />
+          
+          <View style={styles.statusContainer}>
+            <View
+              style={[
+                styles.statusIndicator,
+                { backgroundColor: getStatusColor(borrowing.trangThai) }
+              ]}
+            />
+            <Text style={styles.statusText}>
+              {getStatusText(borrowing.trangThai)}
+            </Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -72,29 +110,70 @@ export default BorrowingItem;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 8,
+    marginBottom: 12,
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#e5e7eb',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    overflow: 'hidden',
   },
   rowContainer: {
     flexDirection: 'row',
   },
   detailContainer: {
-    padding: 12,
+    padding: 16,
     flex: 1,
   },
   title: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    marginBottom: 8,
+    color: '#111827',
+  },
+  infoRow: {
+    flexDirection: 'row',
     marginBottom: 4,
   },
+  label: {
+    fontSize: 14,
+    color: '#6b7280',
+    width: 90,
+  },
+  value: {
+    fontSize: 14,
+    color: '#374151',
+    flex: 1,
+  },
+  bookContainer: {
+    marginTop: 8,
+  },
+  bookNames: {
+    fontSize: 14,
+    color: '#374151',
+    lineHeight: 20,
+  },
+  statusContainer: {
+    width: 80,
+    backgroundColor: '#f9fafb',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+  },
   statusIndicator: {
-    width: 30,
-    marginLeft: 12,
-    borderTopEndRadius: 8,
-    borderBottomEndRadius: 8,
-    alignSelf: 'stretch',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginBottom: 6,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#374151',
+    textAlign: 'center',
   },
 });

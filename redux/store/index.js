@@ -3,6 +3,7 @@ import authSlice from '../reducers/authSlice';
 import bookSlice from '../reducers/bookSlice';
 import theLoaiSlice from '../reducers/theLoaiSlice';
 import phieuMuonSlice from '../reducers/phieuMuonSlice';
+import phieuDangKySlice from '../reducers/phieuDangKySlice';
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     book: bookSlice,
     theLoai: theLoaiSlice,
     phieuMuon: phieuMuonSlice,
+    phieuDangKy: phieuDangKySlice,
   },
 });
 

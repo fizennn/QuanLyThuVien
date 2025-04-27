@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, FlatList, Modal, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, FlatList, Modal, Button, Image, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAllPhieuMuon } from '@/redux/actions/phieuMuonActions';
 import { fetchBooks } from '@/redux/actions/bookActions';
 import BorrowingItem from '@/components/BorrowingItem';
 import FloatingAddButton from '@/components/FloatingAddButton';
 import AddBorrowingModal from '@/components/AddBorrowingModal'; // Import modal thêm phiếu mượn
+import { Icon } from 'react-native-paper';
+import { router } from 'expo-router';
 
 const BorrowingScreens = () => {
   const dispatch = useDispatch();
@@ -58,6 +60,12 @@ const BorrowingScreens = () => {
           value={searchText}
           onChangeText={setSearchText}
         />
+        <TouchableOpacity onPress={() => router.push('/registration_screen')}>
+        <Image
+          source={{uri: 'https://img.icons8.com/ios/100/ticket--v1.png'}}
+          style={styles.icon}/>
+        </TouchableOpacity>
+        
       </View>
       <View style={styles.container}>
         {loading ? (
@@ -100,6 +108,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'row',
     backgroundColor: '#fff',
     padding: 16,
     marginBottom: 12,
@@ -109,10 +120,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   searchInput: {
+    width: '90%',
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     paddingHorizontal: 8,
     borderRadius: 8,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    marginLeft: 8,
   },
 });
